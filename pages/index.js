@@ -53,7 +53,7 @@ const INITIAL_VIEW_STATE = {
   latitude: -27.362875842,
   longitude: 152.962180055,
 
-  zoom: 13,
+  zoom: 9,
   minZoom: 5,
   maxZoom: 15,
   pitch: 40.5,
@@ -109,7 +109,7 @@ export default function Home() {
     if (!object) {
       return null
     }
-    console.log("tooltip", object)
+    // console.log("tooltip", object)
     const lat = object.position[1]
     const lng = object.position[0]
     const count = object.points.length
