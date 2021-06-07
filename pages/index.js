@@ -58,7 +58,7 @@ const INITIAL_VIEW_STATE = {
   minZoom: 5,
   maxZoom: 15,
   pitch: 54.5,
-  bearing: -54,
+  bearing: 54,
 }
 
 export const colorRange = [
