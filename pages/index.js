@@ -15,6 +15,7 @@ import taxiData from "../comps/taxi"
 import axios from "axios"
 import csv from "csv"
 import BounceLoader from "react-spinners/BounceLoader"
+import { StaticMap } from "react-map-gl"
 
 // Source data CSV
 const DATA_URL =
@@ -50,14 +51,14 @@ const material = {
 }
 
 const INITIAL_VIEW_STATE = {
-  latitude: -27.362875842,
-  longitude: 152.962180055,
+  latitude: -27.534623325818668,
+  longitude: 153.02295713763687,
 
-  zoom: 9,
+  zoom: 11,
   minZoom: 5,
   maxZoom: 15,
-  pitch: 40.5,
-  bearing: -27,
+  pitch: 54.5,
+  bearing: -54,
 }
 
 export const colorRange = [
@@ -73,7 +74,7 @@ export default function Home() {
   const [viewport, setViewport] = useState({
     latitude: -27.362875842,
     longitude: 152.962180055,
-    zoom: 6.6,
+    zoom: 12,
     minZoom: 5,
     maxZoom: 15,
     pitch: 40.5,
@@ -83,9 +84,12 @@ export default function Home() {
   // mapbox Token
   const REACT_APP_MAPBOX_TOKEN =
     "pk.eyJ1IjoiZ3VuZXJpYm9pIiwiYSI6ImNrMnM0NjJ1dzB3cHAzbXVpaXhrdGd1YjIifQ.1TmNd7MjX3AhHdXprT4Wjg"
-  const handleViewportChange = useCallback((viewport) => {
-    setViewport(viewport)
-  }, [])
+  const handleViewportChange = useCallback(
+    (viewport) => {
+      setViewport(viewport)
+    },
+    [viewport]
+  )
   //Resize window function
   const resize = () => {
     setViewport({
@@ -132,7 +136,7 @@ export default function Home() {
       const cleanData = await data.map((d) => [Number(d[9]), Number(d[10])])
       console.log("dataaaa", data)
       //setting value
-      const radius = 200
+      const radius = 100
       const upperPercentile = 100
       const coverage = 1
 
@@ -142,7 +146,7 @@ export default function Home() {
           colorRange,
           coverage,
           data: cleanData,
-          elevationRange: [0, 2000],
+          elevationRange: [0, 200],
           elevationScale: cleanData && cleanData.length ? 50 : 0,
           extruded: true,
           getPosition: (d) => d,
@@ -152,7 +156,11 @@ export default function Home() {
           material,
 
           transitions: {
-            elevationScale: 2000,
+            // elevationScale: 2000,
+            getElevation: {
+              duration: 1000,
+              enter: () => [0],
+            },
           },
         }),
       ]
@@ -204,13 +212,16 @@ export default function Home() {
           controller={true}
           getTooltip={getTooltip}
         >
-          <ReactMapGL
+          <StaticMap
+            mapStyle="mapbox://styles/guneriboi/ckp6b4elp0jvv18o2lvpg1708"
+            mapboxApiAccessToken={REACT_APP_MAPBOX_TOKEN}
+          />
+          {/* <ReactMapGL
             {...viewport}
-            onViewportChange={(nextViewport) => setViewport(nextViewport)}
             mapboxApiAccessToken={REACT_APP_MAPBOX_TOKEN}
             onViewportChange={handleViewportChange}
             mapStyle="mapbox://styles/guneriboi/ckp6b4elp0jvv18o2lvpg1708"
-          />
+          /> */}
         </DeckGL>
       )}
     </div>
