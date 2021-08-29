@@ -7,6 +7,10 @@
   align-items: center;
   height: 100vh;
 }
+.mapboxgl-ctrl-bottom-right,
+.mapboxgl-ctrl-bottom-left {
+  display: none !important;
+}
 
 .main {
   padding: 5rem 0;

@@ -92,6 +92,8 @@ export default function Home() {
 
   const [crashTimeData, setCrashTimeData] = useState([0, 0, 0, 0])
   const [crashRef, setCrashRef] = useState([0, 0, 0])
+  const [crashNature, setCrashNature] = useState(["", "", ""])
+  const [uniqueCrash, setUniqueCrash] = useState(["", "", ""])
   let chartSetting = {
     series: [
       {
@@ -110,6 +112,10 @@ export default function Home() {
         data: crashTimeData,
       },
     ],
+    title: {
+      text: "Traffic Sources",
+    },
+
     options: {
       chart: {
         height: 350,
@@ -145,7 +151,7 @@ export default function Home() {
       },
       xaxis: {
         title: {
-          text: "Car Crash Referece Number",
+          text: "Crash Referece Number",
         },
         type: "categories",
       },
@@ -170,6 +176,39 @@ export default function Home() {
       },
     },
   }
+  let chartSetting1 = {
+    series: crashNature,
+    options: {
+      chart: {
+        width: 380,
+        type: "donut",
+        background: "#f2f5fa",
+      },
+      labels: uniqueCrash,
+      dataLabels: {
+        enabled: false,
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 300,
+            },
+            legend: {
+              show: false,
+            },
+          },
+        },
+      ],
+      legend: {
+        position: "right",
+        offsetY: 0,
+        height: 300,
+      },
+    },
+  }
+
   const handleViewportChange = useCallback(
     (viewport) => {
       setViewport(viewport)
@@ -194,12 +233,21 @@ export default function Home() {
   const [style, setStyle] = useState(
     "mapbox://styles/guneriboi/ckp6b4elp0jvv18o2lvpg1708"
   )
-  //Tooltip
-  async function getTooltip({ object }) {
+
+  //Get unique value
+  function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index
+  }
+  // Count how many times it appears
+  function getOccurrence(array, value) {
+    return array.filter((v) => v === value).length
+  }
+  //Onclick
+  const onClick = async ({ object }) => {
     if (!object) {
       return null
     }
-    // console.log("tooltip", object)
+    console.log("tooltip", object)
     const carshTime = await object.points.map((set) => {
       let time = set.source[2]
       return time
@@ -208,20 +256,41 @@ export default function Home() {
       let ref = set.source[3]
       return ref
     })
+
+    const carCrashNature = await object.points.map((set) => {
+      let nature = set.source[4]
+      return nature
+    })
+    let uniqueNature = await carCrashNature.filter(onlyUnique)
+    const natureCountArr = await uniqueNature.map((value) => {
+      let valueCount = getOccurrence(carCrashNature, value)
+      return valueCount
+    })
     // console.log("crashshhshs", carshTime)
     // console.log("crashRef", crashRef)
+    // console.log("uniqueValue", uniqueNature)
+    setCrashNature(natureCountArr)
+    setUniqueCrash(uniqueNature)
     setCrashTimeData(carshTime)
     setCrashRef(crashRef)
-    const lat = await object.position[1]
-    const lng = await object.position[0]
-    const count = await object.points.length
+  }
+
+  //Tooltip
+  function getTooltip({ object }) {
+    if (!object) {
+      return null
+    }
+
+    const lat = object.position[1]
+    const lng = object.position[0]
+    const count = object.points.length
 
     return `\
         latitude: ${Number.isFinite(lat) ? lat.toFixed(6) : ""}
         longitude: ${Number.isFinite(lng) ? lng.toFixed(6) : ""}
         ${count} Accidents`
   }
-  const asyncFunctionDebounced = AwesomeDebouncePromise(getTooltip, 100)
+
   //fetch data
   const fetch = async () => {
     try {
@@ -231,13 +300,20 @@ export default function Home() {
       )
       const data = await res.data.records
 
-      const cleanData = await data.map((d) => [
-        Number(d[9]),
-        Number(d[10]),
-        Number(d[6]),
-        Number(d[1]),
-      ])
-      // console.log("dataaaa", data)
+      const cleanData = await data.map((d) => {
+        let d7 = "unkonw"
+        if (d[7].length == 0) {
+          d7 = "Unknown"
+        }
+        return [
+          Number(d[9]),
+          Number(d[10]),
+          Number(d[6]),
+          Number(d[1]),
+          Number(d[3]),
+        ]
+      })
+      console.log("dataaaa", data)
       //setting value
       const radius = 100
       const upperPercentile = 100
@@ -416,7 +492,8 @@ export default function Home() {
           layers={layers}
           effects={[lightingEffect]}
           controller={true}
-          getTooltip={asyncFunctionDebounced}
+          getTooltip={getTooltip}
+          onClick={onClick}
         >
           <StaticMap
             mapStyle="mapbox://styles/guneriboi/ckp6b4elp0jvv18o2lvpg1708"
@@ -427,17 +504,26 @@ export default function Home() {
             style={{
               position: "fixed",
               height: "100vh",
+              top: "66vh",
+              width: "100vw",
               display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "flex-end",
+              flexDirection: "row",
+              alignItems: "baseline",
+              justifyContent: "space-between",
             }}
           >
             <ApexCharts
               options={chartSetting.options}
               series={chartSetting.series}
               type="line"
-              height={350}
-              width={800}
+              height={300}
+              width={600}
+            />
+            <ApexCharts
+              options={chartSetting1.options}
+              series={chartSetting1.series}
+              type="pie"
+              width={380}
             />
           </div>
           {/* <ReactMapGL
