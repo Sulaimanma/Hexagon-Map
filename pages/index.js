@@ -472,6 +472,23 @@ export default function Home() {
               filter: `blur(20px)`,
             }}
           ></div>
+          <div style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "fixed",
+            zIndex: "999",
+            top: "25vh",
+            left: "34vw",
+          }}>
+            <h1 style={{
+              color: "white",
+              fontSize: "3rem",
+              fontFamily: "Proxima Nova,Arial,Helvetica,sans-serif",
+            }}>
+              Queensland Car Crash Map
+            </h1>
+          </div>
           <div
             style={{
               display: "flex",
