@@ -88,7 +88,7 @@ export default function Home() {
   const [layers, setLayers] = useState([])
   // mapbox Token
   const REACT_APP_MAPBOX_TOKEN =
-    "pk.eyJ1IjoiZ3VuZXJpYm9pIiwiYSI6ImNrMnM0NjJ1dzB3cHAzbXVpaXhrdGd1YjIifQ.1TmNd7MjX3AhHdXprT4Wjg"
+    "pk.eyJ1Ijoic3VsYWltYW4yNzUiLCJhIjoiY2ttMDlmOGduMGV4NTJ1bXJrYzcwMzVkOCJ9.OItwZwGpZdFDVaXdM69YxA"
 
   const [crashTimeData, setCrashTimeData] = useState([0, 0, 0, 0])
   const [crashRef, setCrashRef] = useState([0, 0, 0])
@@ -496,7 +496,7 @@ export default function Home() {
           onClick={onClick}
         >
           <StaticMap
-            mapStyle="mapbox://styles/guneriboi/ckp6b4elp0jvv18o2lvpg1708"
+            mapStyle="mapbox://styles/sulaiman275/cl2nyxxio001614ojsmz3ka04"
             mapboxApiAccessToken={REACT_APP_MAPBOX_TOKEN}
           />
           <div
@@ -526,15 +526,16 @@ export default function Home() {
               width={380}
             />
           </div>
-          {/* <ReactMapGL
-            {...viewport}
-            mapboxApiAccessToken={REACT_APP_MAPBOX_TOKEN}
-            onViewportChange={handleViewportChange}
-            mapStyle="mapbox://styles/guneriboi/ckp6b4elp0jvv18o2lvpg1708"
-          /> */}
+
 
           <FirstPersonView width="50%" x="50%" fovy={50} />
         </DeckGL>
+          // <ReactMapGL
+          //   {...viewport}
+          //   mapboxApiAccessToken={REACT_APP_MAPBOX_TOKEN}
+          //   onViewportChange={handleViewportChange}
+          //   mapStyle="mapbox://styles/sulaiman275/cl2nyxxio001614ojsmz3ka04"
+          // /> 
       )}
     </div>
   )
